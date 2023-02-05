@@ -58,15 +58,21 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
         skip = self._skip_unreleased
         locallogger.debug("Start iterating commits")
         
-        ignore = ignore.split(',')
+        ignore = ignore.lower().split(',')  # list of ban words
+        
         for commit in commits:
+            ignore_commit = False
             sha = commit.hexsha[0:7]
             locallogger.debug("Found commit %s", sha)
-            locallogger.debug(f'my commit text: {commit.message}')
-            # for ban_word in ignore:
-            #     if ban_word in commit[1]:
-            #         continue
+            locallogger.debug(f'my ignore: {ignore}')
             
+            for ban_word in ignore:
+                if ban_word in commit.message.lower().split():
+                    ignore_commit = True
+                    break
+            if ignore_commit:
+                continue
+                
             if skip and commit not in self.commit_tags_index:
                 locallogger.debug("Skipping unreleased commit %s", sha)
                 continue
