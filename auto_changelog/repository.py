@@ -38,6 +38,7 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
         diff_url: Optional[str] = None,
         starting_commit: str = "",
         stopping_commit: str = "HEAD",
+        ignore: str = ""
     ) -> Changelog:
         locallogger = logging.getLogger("repository.generate_changelog")
         issue_url = issue_url or self._issue_from_git_remote_url(remote)
@@ -56,10 +57,16 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
         first_commit = True
         skip = self._skip_unreleased
         locallogger.debug("Start iterating commits")
+        
+        ignore = ignore.split(',')
         for commit in commits:
             sha = commit.hexsha[0:7]
             locallogger.debug("Found commit %s", sha)
-
+            locallogger.debug(f'my commit text: {commit.message}')
+            # for ban_word in ignore:
+            #     if ban_word in commit[1]:
+            #         continue
+            
             if skip and commit not in self.commit_tags_index:
                 locallogger.debug("Skipping unreleased commit %s", sha)
                 continue

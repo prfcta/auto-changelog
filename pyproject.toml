@@ -5,7 +5,7 @@ description = "Simple tool to generate nice, formatted changelogs from vcs"
 authors = ["Michael F Bryan <michaelfbryan@gmail.com>", "Ken Mijime <kenaco666@gmail.com>"]
 license = "MIT"
 readme = "README.rst"
-repository = "https://github.com/Michael-F-Bryan/auto-changelog"
+repository = 'https://gitlab.transtelematica.ru/tms/TMS.git'
 keywords = ['git', 'changelog']
 classifiers = [
 #    'Development Status :: 1 - Planning',

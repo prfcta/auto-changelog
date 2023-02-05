@@ -7,6 +7,9 @@ import pytest
 from click.testing import CliRunner
 
 from auto_changelog.__main__ import main
+from auto_changelog import default_issue_pattern, default_issue_url, default_diff_url, default_last_release, \
+    github_issue_pattern, github_issue_url, github_diff_url, github_last_release, gitlab_issue_pattern, \
+    gitlab_issue_url, gitlab_diff_url, gitlab_last_release
 
 
 # pylint: disable=redefined-outer-name
@@ -52,14 +55,14 @@ def changelog_name():
 @pytest.fixture
 def open_changelog(test_repo, changelog_name):
     file = None
-
+    
     def _open_changelog():
         nonlocal file
         file = open(changelog_name, encoding="utf-8")  # pylint: disable=consider-using-with
         return file
-
+    
     yield _open_changelog
-
+    
     if file:
         file.close()
 
@@ -694,3 +697,19 @@ def test_no_debug(caplog, runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     assert "Logging level has been set to DEBUG" not in caplog.text
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [["git remote add origin https://gitlab.com/Michael-F-Bryan/auto-changelog.git"]],
+)
+def test_set_gitlab(caplog, runner, open_changelog):
+    print('my test')
+    caplog.set_level(logging.DEBUG)
+    result = runner.invoke(main)
+    print(f'default_issue_pattern {default_issue_pattern}')
+    assert result.exit_code == 0, result.stderr
+    assert default_issue_pattern == gitlab_issue_pattern
+    assert default_issue_url == gitlab_issue_url
+    assert default_diff_url == gitlab_diff_url
+    assert default_last_release == gitlab_last_release

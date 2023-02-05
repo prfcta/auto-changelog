@@ -177,6 +177,7 @@ class Changelog:  # pylint: disable=too-many-instance-attributes
         issue_url: Optional[str] = None,
         tag_prefix: str = "",
         tag_pattern: Optional[str] = None,
+        ignore: str = ""
     ):
         self.title = title
         self.description = description
@@ -229,6 +230,7 @@ class RepositoryInterface(ABC):  # pylint: disable=too-few-public-methods
         diff_url: Optional[str],
         starting_commit: str,
         stopping_commit: str,
+        ignore: str
     ) -> Changelog:
         raise NotImplementedError
 
