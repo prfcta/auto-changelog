@@ -699,17 +699,23 @@ def test_no_debug(caplog, runner, open_changelog):
     assert "Logging level has been set to DEBUG" not in caplog.text
 
 
-@pytest.mark.parametrize(
-    "commands",
-    [["git remote add origin https://gitlab.com/Michael-F-Bryan/auto-changelog.git"]],
-)
 def test_set_gitlab(caplog, runner, open_changelog):
-    print('my test')
     caplog.set_level(logging.DEBUG)
-    result = runner.invoke(main)
-    print(f'default_issue_pattern {default_issue_pattern}')
+    result = runner.invoke(main, ["--gitlab"])
     assert result.exit_code == 0, result.stderr
     assert default_issue_pattern == gitlab_issue_pattern
     assert default_issue_url == gitlab_issue_url
     assert default_diff_url == gitlab_diff_url
     assert default_last_release == gitlab_last_release
+
+
+@pytest.mark.parametrize("commands",
+                         [['git commit --allow-empty -q -m "feat: testing ignore commits"',
+                           'git commit --allow-empty -q -m "feat: not ignored commit"']])
+def test_ignore_commit(runner, open_changelog):
+    result = runner.invoke(main, ["-u", "--ignore", "testing,ignore"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    changelog_content = f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* not ignored commit\n"
+    assert "feat: testing ignore commits" not in changelog
+    assert changelog_content == changelog
