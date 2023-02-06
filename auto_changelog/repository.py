@@ -64,8 +64,8 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
             ignore_commit = False
             sha = commit.hexsha[0:7]
             locallogger.debug("Found commit %s", sha)
-            locallogger.debug(f'my ignore: {ignore}')
             
+            # ignore commit if one of words in commit contains ignored word
             for ban_word in ignore:
                 if ban_word in commit.message.lower().split():
                     ignore_commit = True

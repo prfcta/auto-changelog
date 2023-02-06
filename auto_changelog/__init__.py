@@ -21,7 +21,6 @@ def set_gitlab():
     global default_issue_url  # pylint: disable=global-statement
     global default_diff_url  # pylint: disable=global-statement
     global default_last_release  # pylint: disable=global-statement
-    x = 10
     default_issue_pattern = gitlab_issue_pattern
     default_issue_url = gitlab_issue_url
     default_diff_url = gitlab_diff_url
