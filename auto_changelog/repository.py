@@ -65,6 +65,12 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
             sha = commit.hexsha[0:7]
             locallogger.debug("Found commit %s", sha)
             
+            # skip commit that does not contain context
+            pattern = r"[a-z]+\([a-z]+\)!?:"
+            result = re.match(pattern, commit.message)
+            if not result:
+                continue
+                
             # ignore commit if one of words in commit contains ignored word
             for ban_word in ignore:
                 if ban_word in commit.message.lower().split():
