@@ -719,3 +719,15 @@ def test_ignore_commit(runner, open_changelog):
     changelog_content = f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* not ignored commit\n"
     assert "feat: testing ignore commits" not in changelog
     assert changelog_content == changelog
+
+
+@pytest.mark.parametrize("commands",
+                         [['git commit --allow-empty -q -m "feat(app): testing context in commit"',
+                           'git commit --allow-empty -q -m "feat: testing not context in commit"']])
+def test_skip_commit_without_context(runner, open_changelog):
+    result = runner.invoke(main, ["-u"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    changelog_content = f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* (app): testing context in commit\n"
+    assert changelog_content == changelog
+    assert "testing not context in commit" not in changelog
